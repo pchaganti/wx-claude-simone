@@ -51,6 +51,18 @@ For now check out .src/templates/prompts and .src/templates/prompts/partials in 
 
 More information will follow. A documentation is in the works.
 
+## Testing
+
+The MCP server includes a comprehensive test suite to ensure reliability:
+
+```bash
+pnpm test          # Run all tests
+pnpm test:watch    # Run tests in watch mode
+pnpm test:coverage # Run tests with coverage report
+```
+
+See [docs/TESTING.md](docs/TESTING.md) for detailed testing documentation.
+
 ## License
 
 MIT
