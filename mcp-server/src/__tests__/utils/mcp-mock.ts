@@ -1,4 +1,4 @@
-import { vi } from 'vitest';
+import { vi, beforeEach, afterEach } from 'vitest';
 import { EventEmitter } from 'events';
 import type { Transport } from '@modelcontextprotocol/sdk/types.js';
 
@@ -97,7 +97,7 @@ export class MockTransport extends EventEmitter implements Transport {
   }
 }
 
-export function createMockTransport() {
+export function createMockTransport(): MockTransport {
   return new MockTransport();
 }
 

@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { spawn, ChildProcess } from 'child_process';
-import { createMockTransport } from '../utils/mcp-mock.js';
+import { createMockTransport, MockTransport } from '../utils/mcp-mock.js';
 import type { 
   InitializeResult, 
   GetPromptResult,
@@ -17,7 +17,7 @@ import * as fs from 'fs';
 describe('MCP Server Integration Tests', () => {
   // Simple integration tests to ensure server keeps working
   // when new prompts or features are added
-  let transport: any;
+  let transport: MockTransport;
   let serverProcess: ChildProcess;
   const testProjectPath = '/test/project';
   

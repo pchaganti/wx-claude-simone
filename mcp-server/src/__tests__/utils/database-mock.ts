@@ -27,11 +27,27 @@ export function setupTestDatabase() {
   });
 
   afterEach(() => {
-    if (db && !db.inTransaction) {
-      db.close();
+    // Close database with error handling
+    if (db) {
+      try {
+        if (!db.inTransaction) {
+          db.close();
+        }
+      } catch (error) {
+        // Database might already be closed
+        console.warn('Database cleanup error:', error);
+      }
     }
-    if (dbConnection && dbConnection.db && !dbConnection.db.inTransaction) {
-      dbConnection.db.close();
+    
+    if (dbConnection && dbConnection.db) {
+      try {
+        if (!dbConnection.db.inTransaction) {
+          dbConnection.db.close();
+        }
+      } catch (error) {
+        // Database might already be closed
+        console.warn('Database connection cleanup error:', error);
+      }
     }
   });
 

@@ -4,6 +4,7 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as os from 'os';
 import { fileURLToPath } from 'url';
 import { waitFor } from '../utils/helpers.js';
 
@@ -14,7 +15,7 @@ describe('MCP Server STDIO Integration', () => {
   let client: Client;
   let transport: StdioClientTransport;
   let serverProcess: ChildProcess;
-  const testProjectPath = path.join(__dirname, '../../../test-project');
+  const testProjectPath = path.join(os.tmpdir(), 'simone-stdio-test-' + Date.now());
   
   beforeEach(async () => {
     // Create test project directory

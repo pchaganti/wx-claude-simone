@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { spawn, ChildProcess } from 'child_process';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as os from 'os';
 import { fileURLToPath } from 'url';
 import { createTestEnv } from './utils/helpers.js';
 
@@ -9,7 +10,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 describe('Smoke Tests', () => {
   let serverProcess: ChildProcess;
-  const testProjectPath = path.join(__dirname, '../../test-smoke-project');
+  const testProjectPath = path.join(os.tmpdir(), 'simone-smoke-test-' + Date.now());
   
   beforeEach(() => {
     // Create minimal test environment
@@ -23,14 +24,37 @@ describe('Smoke Tests', () => {
     }
   });
   
-  afterEach(() => {
-    // Clean up
+  afterEach(async () => {
+    // Clean up server process with proper termination wait
     if (serverProcess && !serverProcess.killed) {
       serverProcess.kill();
+      // Wait for process to actually terminate
+      await new Promise<void>((resolve) => {
+        const checkInterval = setInterval(() => {
+          if (serverProcess.killed || serverProcess.exitCode !== null) {
+            clearInterval(checkInterval);
+            resolve();
+          }
+        }, 100);
+        // Timeout after 5 seconds
+        setTimeout(() => {
+          clearInterval(checkInterval);
+          resolve();
+        }, 5000);
+      });
     }
     
+    // Verify directory removal
     if (fs.existsSync(testProjectPath)) {
-      fs.rmSync(testProjectPath, { recursive: true, force: true });
+      try {
+        fs.rmSync(testProjectPath, { recursive: true, force: true });
+        // Verify removal succeeded
+        if (fs.existsSync(testProjectPath)) {
+          console.warn(`Failed to remove test directory: ${testProjectPath}`);
+        }
+      } catch (error) {
+        console.error(`Error removing test directory: ${error}`);
+      }
     }
   });
   

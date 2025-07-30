@@ -100,6 +100,12 @@ export function detectActivityType(activity: string): string {
     return pastTenseMap[firstWord];
   }
   
+  // Scoring constants
+  const SCORE_EXACT_WORD_MATCH = 3;
+  const SCORE_SUBSTRING_MATCH = 1;
+  const SCORE_FIRST_WORD_BONUS = 5;
+  const SCORE_POSITION_BONUS_MAX = 3;
+  
   // Score each type based on keyword matches and context
   const scores = new Map<string, number>();
   
@@ -112,20 +118,20 @@ export function detectActivityType(activity: string): string {
         // Higher score for exact word matches vs substring matches
         const regex = new RegExp(`\\b${keyword}\\b`, 'i');
         if (regex.test(activity)) {
-          score += 3; // Exact word match
+          score += SCORE_EXACT_WORD_MATCH; // Exact word match
           
           // Extra bonus for verb position (first few words)
           const wordIndex = words.findIndex(w => w === keyword);
-          if (wordIndex >= 0 && wordIndex < 3) {
-            score += (3 - wordIndex); // Higher score for earlier position
+          if (wordIndex >= 0 && wordIndex < SCORE_POSITION_BONUS_MAX) {
+            score += (SCORE_POSITION_BONUS_MAX - wordIndex); // Higher score for earlier position
           }
         } else {
-          score += 1; // Substring match
+          score += SCORE_SUBSTRING_MATCH; // Substring match
         }
         
         // Bonus for keyword at start of string (likely the main verb)
         if (firstWord === keyword) {
-          score += 5;
+          score += SCORE_FIRST_WORD_BONUS;
         }
       }
     }

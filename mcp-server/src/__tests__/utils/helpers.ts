@@ -1,7 +1,9 @@
 import { vi } from 'vitest';
 import * as path from 'path';
+import * as os from 'os';
 
-export const TEST_PROJECT_PATH = '/test/project';
+// Use system temp directory for better isolation
+export const TEST_PROJECT_PATH = path.join(os.tmpdir(), 'simone-test-' + Date.now());
 export const TEST_CONFIG_PATH = path.join(TEST_PROJECT_PATH, '.simone', 'project.yaml');
 
 export function createTestEnv(overrides: Record<string, string> = {}) {
@@ -9,6 +11,28 @@ export function createTestEnv(overrides: Record<string, string> = {}) {
     PROJECT_PATH: TEST_PROJECT_PATH,
     NODE_ENV: 'test',
     ...overrides,
+  };
+}
+
+export function createSafeTestEnv(overrides: Record<string, string> = {}) {
+  // Store original env for restoration
+  const originalEnv = { ...process.env };
+  
+  // Create test environment
+  const testEnv = {
+    PROJECT_PATH: TEST_PROJECT_PATH,
+    NODE_ENV: 'test',
+    ...overrides,
+  };
+  
+  // Apply test env
+  Object.assign(process.env, testEnv);
+  
+  // Return restore function
+  return {
+    restore: () => {
+      process.env = originalEnv;
+    }
   };
 }
 
