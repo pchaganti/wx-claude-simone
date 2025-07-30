@@ -7,7 +7,7 @@
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import yaml from 'js-yaml';
-import { ProjectConfig, ResolvedContext } from './types.js';
+import type { ProjectConfig, ResolvedContext } from './types.js';
 import { logError } from '../utils/logger.js';
 
 type FileReader = (path: string, encoding: 'utf8') => string;
@@ -41,7 +41,7 @@ export class ConfigLoader {
       this.config = this.validateConfig(rawConfig);
       return this.config;
     } catch (error) {
-      logError(new Error(`Failed to load configuration from ${this.configPath}: ${error}`));
+      void logError(new Error(`Failed to load configuration from ${this.configPath}: ${error}`));
       return this.getDefaultConfig();
     }
   }

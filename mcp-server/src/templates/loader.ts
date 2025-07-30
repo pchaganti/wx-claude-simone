@@ -8,6 +8,7 @@ import { readFile, stat } from 'fs/promises';
 import { join, dirname } from 'path';
 import yaml from 'js-yaml';
 import Handlebars from 'handlebars';
+import type { TemplateDelegate as HandlebarsTemplateDelegate } from 'handlebars';
 import { fileURLToPath } from 'url';
 import { existsSync } from 'fs';
 import type { PromptTemplate } from '../types/index.js';
@@ -193,7 +194,7 @@ export class TemplateLoader {
       const compiled = Handlebars.compile(template);
       this.compiledTemplates.set(cacheKey, compiled);
       return compiled;
-    } catch (error) {
+    } catch (_error) {
       // Return error template if compilation fails
       const errorTemplate = Handlebars.compile(
         'Tell the user an error happened and show these error details <error_message>Template compilation error: {{error}}</error_message>'
@@ -210,7 +211,7 @@ export class TemplateLoader {
       try {
         return await readFile(projectPartialPath, 'utf-8');
       } catch (error) {
-        logError(`Failed to load project partial ${name}: ${error}`);
+        void logError(`Failed to load project partial ${name}: ${error}`);
       }
     }
     
@@ -221,7 +222,7 @@ export class TemplateLoader {
       try {
         return await readFile(builtInPartialPath, 'utf-8');
       } catch (error) {
-        logError(`Failed to load built-in partial ${name}: ${error}`);
+        void logError(`Failed to load built-in partial ${name}: ${error}`);
       }
     }
     
